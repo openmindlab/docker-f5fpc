@@ -4,6 +4,7 @@ DOCKER_IMAGE="matthiaslohr/f5fpc:latest@sha256:86418f9d612a8d3fc208c7296729b61c8
 CONTAINER_NAME="f5fpc-vpn"
 VPNHOST=""
 USERNAME=""
+PASSWORD=""
 keep_running=1
 
 for cmd in docker ip; do
@@ -25,6 +26,7 @@ Supported parameters:
   -h --help  Show this help text
   -t --host     VPN host
   -u --user     VPN username
+  -p --password VPN password
 EOF
 }
 
@@ -93,6 +95,7 @@ start_client() {
     --net host \
     -e VPNHOST="$VPNHOST" \
     -e USERNAME="$USERNAME" \
+    -e PASSWORD="$PASSWORD" \
     "${DOCKER_IMAGE}" \
     /opt/idle.sh > /dev/null; then
       echo "Error starting docker container."
@@ -108,6 +111,7 @@ start_gateway() {
     --sysctl net.ipv4.ip_forward=1 \
     -e VPNHOST="$VPNHOST" \
     -e USERNAME="$USERNAME" \
+    -e PASSWORD="$PASSWORD" \
     "${DOCKER_IMAGE}" \
     /opt/idle.sh > /dev/null; then
       echo "Error starting docker container."
@@ -149,6 +153,11 @@ while [ $# -gt 0 ] ; do
       ;;
     -u|--user)
       USERNAME="$2"
+      shift
+      shift
+      ;;
+    -p|--password)
+      PASSWORD="$2"
       shift
       shift
       ;;
